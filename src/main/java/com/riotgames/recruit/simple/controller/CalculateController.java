@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 /**
@@ -20,15 +21,14 @@ public class CalculateController {
     @Autowired
     private CalculateService calculateService;
 
-    @RequestMapping(name = "/calculate", method = RequestMethod.POST/*, produces = "application/x-www-form-urlencoded"*/)
+    @RequestMapping(name = "/calculate", method = RequestMethod.POST)
     public String question(@RequestBody String question){
-        /**
-         * 우선 순위
-         * 1: ^(거듭 제곱)   => 4^2 = 16
-         * 2: * /
-         * 3: - +
-         */
-        String q = URLDecoder.decode(question).replace("=","");
+        String q = null;
+        try {
+            q = URLDecoder.decode(question, "UTF-8").replace("=","");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return calculateService.getAnswer(StringUtils.trimAllWhitespace(q));
     }
 }
