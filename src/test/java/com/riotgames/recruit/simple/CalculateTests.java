@@ -17,6 +17,9 @@
 package com.riotgames.recruit.simple;
 
 import com.riotgames.recruit.simple.service.CalculateService;
+import com.riotgames.recruit.simple.service.PostOrderService;
+import com.riotgames.recruit.simple.service.SplitService;
+import com.riotgames.recruit.simple.service.ValidationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,11 +29,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Tests for {@link RiotSeryangApplication}.
@@ -42,29 +43,70 @@ import static org.junit.Assert.assertEquals;
 @SpringApplicationConfiguration(classes = RiotSeryangApplication.class)
 public class CalculateTests {
 
-	public CalculateService calculateService = new CalculateService();
+    @Autowired
+    public ValidationService validationService = new ValidationService();
+
+    @Autowired
+    public SplitService splitService = new SplitService();
+
+    @Autowired
+    public CalculateService calculateService = new CalculateService();
+
+    @Autowired
+    public PostOrderService postOrderService = new PostOrderService();
 
     @Autowired
     private Environment environment;
 
-    private Map<String, String> map = new HashMap<>();
+    private String question;
+    private List<String> splitOutput;
+    private List<String> postOrderOutput;
 
     @Before
     public void init(){
+        question = "(3+2)/2";
+        splitOutput = Arrays.asList("(","3","+","2",")","/","2");
+        postOrderOutput = Arrays.asList("3","2","+","2","/");
+    }
+
+    @Test
+    public void validationTestOk() throws Exception {
+        validationService.validCheck(question);
+        validationService.validCheck(")3+2(");
+    }
+
+
+    @Test(expected = Exception.class)
+    public void validationTestException() throws Exception {
+        validationService.validCheck("(a+2)");
+    }
+
+    @Test
+    public void splitDataTest() throws Exception {
+        assertArrayEquals(splitService.splitInputQuestion(question).toArray(), splitOutput.toArray());
+        List<String> answer = Arrays.asList(")","3","+","2","(");
+        assertArrayEquals(splitService.splitInputQuestion(")3+2(").toArray(), answer.toArray());
+    }
+
+    @Test
+    public void postOrderTest() throws Exception{
+        assertArrayEquals(postOrderService.convertToPostOrder(splitOutput).toArray(), postOrderOutput.toArray());
+    }
+
+	@Test
+	public void calculateTest() {
+        Map<String, String> map = new HashMap<>();
         for(int i = 1 ; i < 34 ; i++){
-            String question = environment.getProperty("case"+i);
-            System.out.println(question);
-            String [] q = question.split(" = ");
+            String caseNo = environment.getProperty("case"+i);
+            String [] q = caseNo.split(" = ");
             map.put(q[0], q[1]);
         }
-    }
-	@Test
-	public void test() throws Exception {
 
         Iterator<String> ite = map.keySet().iterator();
         while(ite.hasNext()){
             String key = ite.next();
             assertEquals(calculateService.getAnswer(StringUtils.trimAllWhitespace(key)), StringUtils.trimAllWhitespace(map.get(key)));
         }
+        assertEquals(calculateService.getAnswer(StringUtils.trimAllWhitespace(")3+2(")), "ERROR");
 	}
 }

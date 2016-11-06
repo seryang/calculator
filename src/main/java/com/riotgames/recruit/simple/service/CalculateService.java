@@ -25,47 +25,54 @@ public class CalculateService {
     private ValidationService validationService;
 
     @Autowired
-    private SpliterService spliterService;
+    private SplitService splitService;
 
     @Autowired
     private PostOrderService postOrderService;
 
-    public String getAnswer(String question){
-        String answer;
+    public String getAnswer(String inputQuestion){
 
         try{
-            if(validationService.validCheck(question)) {
-                List<String> splitDataList = spliterService.splitData(question);
-                logger.info("* In-Order : " + splitDataList);
+            validationService.validCheck(inputQuestion);
+            List<String> splitDataList = splitService.splitInputQuestion(inputQuestion);
+            List<String> postOrderDataList = postOrderService.convertToPostOrder(splitDataList);
 
-                List<String> postOrderData = postOrderService.getPostOrder(splitDataList);
-                logger.info("* Post-Order : " + postOrderData);
-                answer = getCalculate(postOrderData);
-            }else{
-                return FAIL;
-            }
+            logger.info("* In-Order : " + splitDataList + " -> " + "Post-Order : " + postOrderDataList);
+
+            return calculate(postOrderDataList);
         }catch(Exception e){
             logger.error(e.getMessage());
             return FAIL;
         }
-        return answer;
     }
 
-    private String getCalculate(List<String> wow) throws Exception {
+    /**
+     * 후위표기법으로 담긴 list를, stack을 이용하여 계산한다.
+     * 1) 숫자의 경우 stack에 push
+     * 2) 연산자를 만나면 stack에서 2개를 팝하여 계산
+     * 3) for문의 끝나면 stack에는 1개의 데이터가 나와야 정상이며, 그 값이 결과값
+     *
+     * @param postOrderDataList
+     * @return calculate result
+     * @throws Exception (ERROR)
+     */
+    private String calculate(List<String> postOrderDataList) throws Exception {
 
         Stack<String> stack = new Stack<>();
 
-        for(int i = 0 ; i < wow.size() ; i++){
-            String go  = wow.get(i);
-            if(typeCheckService.isOperator(go)){
-                if(i == wow.size() - 1 && stack.size() == 1 && go.equals("-")){
-                    stack.push("-"+stack.pop());
+        for(int i = 0 ; i < postOrderDataList.size() ; i++){
+            String s  = postOrderDataList.get(i);
+
+            if(typeCheckService.isOperator(s)){
+                if(i == postOrderDataList.size() - 1 && stack.size() == 1 && "-".equals(s)){
+                    stack.push("-" + stack.pop());
                     break;
                 }
+
                 double num2 = Double.parseDouble(stack.pop());
                 double num1 = Double.parseDouble(stack.pop());
 
-                switch(go){
+                switch(s){
                     case "^" :
                         stack.push(String.valueOf(Math.pow(num1, num2)));
                         break;
@@ -80,22 +87,25 @@ public class CalculateService {
                         break;
                     case "/" :
                         if (num2 == 0) {
-                            throw new Exception("Cannot devide with zero");
+                            throw new Exception("Cannot divide with zero");
                         }
+
                         stack.push(String.valueOf(num1/num2));
                         break;
                 }
             }else{
-                stack.push(go);
+                stack.push(s);
             }
         }
-        if(stack.size() != 1) throw new Exception("Riot heart");
+
+        if(stack.size() != 1){
+            throw new Exception();
+        }
+
         return answerFormat(stack.pop());
     }
 
-
-
-    private String answerFormat(String answer){
+    private String answerFormat(String answer) throws Exception{
         if(Double.parseDouble(answer) == 0){
             answer = "0";
         }

@@ -35,17 +35,18 @@ public class TypeCheckService {
         return OPERATOR.contains(s);
     }
 
-    public int getPriority(String k){
-        return PRIORITY.get(k);
+    public int getPriority(String s){
+        return PRIORITY.get(s);
     }
 
     public boolean isNum(String s) {
         try {
+            // 숫자가 아닌 경우 Exception
             Double.parseDouble(s);
             return true;
         }catch(NumberFormatException n){
             logger.info(n.getMessage());
+            return false;
         }
-        return false;
     }
 }

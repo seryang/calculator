@@ -1,6 +1,8 @@
 package com.riotgames.recruit.simple.controller;
 
 import com.riotgames.recruit.simple.service.CalculateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,14 +23,22 @@ public class CalculateController {
     @Autowired
     private CalculateService calculateService;
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * 계산식을 입력 받아서, 결과 Text 리턴
+     *
+     * @param question
+     * @return (계산 결과 or ERROR text)
+     */
     @RequestMapping(name = "/calculate", method = RequestMethod.POST)
     public String question(@RequestBody String question){
-        String q = null;
         try {
-            q = URLDecoder.decode(question, "UTF-8").replace("=","");
+            String inputQuestion = URLDecoder.decode(question, "UTF-8").replace("=","");
+            return calculateService.getAnswer(StringUtils.trimAllWhitespace(inputQuestion));
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
+            return "ERROR";
         }
-        return calculateService.getAnswer(StringUtils.trimAllWhitespace(q));
     }
 }
