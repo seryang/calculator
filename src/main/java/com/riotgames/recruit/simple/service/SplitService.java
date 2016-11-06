@@ -36,7 +36,7 @@ public class SplitService {
 
                 if ("-".equals(currentChar) && (i == 0 || typeCheckService.isOperator(inputQuestion.charAt(i - 1))
                                                        || typeCheckService.isBracket(inputQuestion.charAt(i - 1)))) {
-                    if (i == 0 && "-".equals(String.valueOf(inputQuestion.charAt(i+1)))) {
+                    if (i == 0 && "-".equals(String.valueOf(inputQuestion.charAt(i + 1)))) {
                         i++;
                     } else {
                         inputElement = inputElement.concat(currentChar);
@@ -49,7 +49,9 @@ public class SplitService {
 
                     splitDataList.add(currentChar);
                 }
+
             } else {
+
                 if ("p".equals(currentChar) || "e".equals(currentChar)) {
 
                     if (inputElementSize != 0) {
@@ -66,7 +68,6 @@ public class SplitService {
                             splitDataList.add(String.valueOf(Math.E));
                             break;
                     }
-
                 } else {
                     inputElement = inputElement.concat(currentChar);
 
@@ -74,6 +75,7 @@ public class SplitService {
                         splitDataList.add(inputElement);
                     }
                 }
+
             }
         }
         return splitDataList;

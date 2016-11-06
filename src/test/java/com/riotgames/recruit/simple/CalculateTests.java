@@ -31,7 +31,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link RiotSeryangApplication}.
@@ -86,6 +87,10 @@ public class CalculateTests {
         assertArrayEquals(splitService.splitInputQuestion(question).toArray(), splitOutput.toArray());
         List<String> answer = Arrays.asList(")","3","+","2","(");
         assertArrayEquals(splitService.splitInputQuestion(")3+2(").toArray(), answer.toArray());
+
+        answer = Arrays.asList("1.5");
+        assertArrayEquals(splitService.splitInputQuestion("--1.5").toArray(), answer.toArray());
+
     }
 
     @Test
