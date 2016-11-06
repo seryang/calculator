@@ -44,10 +44,7 @@ public class CalculateService {
     }
 
     /**
-     * 후위표기법으로 담긴 list를, stack을 이용하여 계산한다.
-     * 1) 숫자의 경우 stack에 push
-     * 2) 연산자를 만나면 stack에서 2개를 팝하여 계산
-     * 3) for문의 끝나면 stack에는 1개의 데이터가 나와야 정상이며, 그 값이 결과값
+     * 후위표기법으로 담긴 list를, stack을 이용하여 계산
      *
      * @param postOrderDataList
      * @return calculate result
@@ -74,15 +71,15 @@ public class CalculateService {
                         break;
 
                     case "+" :
-                        stack.push(String.valueOf(num1+num2));
+                        stack.push(String.valueOf(num1 + num2));
                         break;
 
                     case "-" :
-                        stack.push(String.valueOf(num1-num2));
+                        stack.push(String.valueOf(num1 - num2));
                         break;
 
                     case "*" :
-                        stack.push(String.valueOf(num1*num2));
+                        stack.push(String.valueOf(num1 * num2));
                         break;
 
                     case "/" :
@@ -90,7 +87,7 @@ public class CalculateService {
                             throw new Exception("Cannot divide with zero");
                         }
 
-                        stack.push(String.valueOf(num1/num2));
+                        stack.push(String.valueOf(num1 / num2));
                         break;
                 }
             } else {
