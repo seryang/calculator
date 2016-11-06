@@ -31,16 +31,17 @@ public class PostOrderService {
      * @return postOrder data list
      * @throws Exception (ERROR)
      */
-    public List<String> convertToPostOrder(List<String> splitDataList) throws Exception{
+    public List<String> convertToPostOrder(List<String> splitDataList) throws Exception {
 
         Stack<String> stack = new Stack<>();
         List<String> postOrderList = new ArrayList<>();
 
-        for(String s : splitDataList){
-            switch(s){
+        for (String data : splitDataList) {
+            switch(data) {
                 case "(" :
-                    stack.push(s);
+                    stack.push(data);
                     break;
+
                 case ")" :
                     while(typeCheckService.isBracket(stack.peek()) == false){
                         postOrderList.add(stack.pop());
@@ -48,13 +49,14 @@ public class PostOrderService {
 
                     stack.pop();
                     break;
+
                 case "+" :
                 case "-" :
                 case "/" :
                 case "*" :
-                    int priorityNum = typeCheckService.getPriority(s);
+                    int priorityNum = typeCheckService.getPriority(data);
 
-                    while(stack.isEmpty() == false && typeCheckService.isBracket(s) == false
+                    while(stack.isEmpty() == false && typeCheckService.isBracket(data) == false
                                                  && typeCheckService.isOperator(stack.peek()) == true) {
                         if(typeCheckService.getPriority(stack.peek()) >= priorityNum){
                             postOrderList.add(stack.pop());
@@ -63,17 +65,19 @@ public class PostOrderService {
                         }
                     }
 
-                    stack.push(s);
+                    stack.push(data);
                     break;
+
                 case "^" :
-                    stack.push(s);
+                    stack.push(data);
                     break;
+
                 default :
-                    postOrderList.add(s);
+                    postOrderList.add(data);
             }
         }
 
-        while(!stack.isEmpty()){
+        while (stack.isEmpty() == false) {
             postOrderList.add(stack.pop());
         }
 

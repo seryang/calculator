@@ -89,24 +89,24 @@ public class CalculateTests {
     }
 
     @Test
-    public void postOrderTest() throws Exception{
+    public void postOrderTest() throws Exception {
         assertArrayEquals(postOrderService.convertToPostOrder(splitOutput).toArray(), postOrderOutput.toArray());
     }
 
-	@Test
-	public void calculateTest() {
+    @Test
+    public void calculateTest() {
         Map<String, String> map = new HashMap<>();
-        for(int i = 1 ; i < 34 ; i++){
-            String caseNo = environment.getProperty("case"+i);
+        for (int i = 1 ; i < 34 ; i++) {
+            String caseNo = environment.getProperty("case" + i);
             String [] q = caseNo.split(" = ");
             map.put(q[0], q[1]);
         }
 
         Iterator<String> ite = map.keySet().iterator();
-        while(ite.hasNext()){
+        while (ite.hasNext()) {
             String key = ite.next();
             assertEquals(calculateService.getAnswer(StringUtils.trimAllWhitespace(key)), StringUtils.trimAllWhitespace(map.get(key)));
         }
         assertEquals(calculateService.getAnswer(StringUtils.trimAllWhitespace(")3+2(")), "ERROR");
-	}
+    }
 }

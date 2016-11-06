@@ -32,7 +32,7 @@ public class CalculateController {
      * @return (계산 결과 or ERROR text)
      */
     @RequestMapping(name = "/calculate", method = RequestMethod.POST)
-    public String question(@RequestBody String question){
+    public String question(@RequestBody String question) {
         try {
             String inputQuestion = URLDecoder.decode(question, "UTF-8").replace("=","");
             return calculateService.getAnswer(StringUtils.trimAllWhitespace(inputQuestion));

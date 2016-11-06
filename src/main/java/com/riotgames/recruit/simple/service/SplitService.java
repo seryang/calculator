@@ -28,71 +28,52 @@ public class SplitService {
         // list에 들어갈 개별 데이터
         String inputElement = "";
 
-        for(int i = 0 ; i < inputQuestion.length() ; i++){
-            int currentElementSize = inputElement.length();
+        for (int i = 0 ; i < inputQuestion.length() ; i++) {
+            int inputElementSize = inputElement.length();
             String currentChar = String.valueOf(inputQuestion.charAt(i));
 
-            if(typeCheckService.isOperator(currentChar)){
-                if("-".equals(currentChar)){
-                    if(i == 0 || typeCheckService.isOperator(String.valueOf(inputQuestion.charAt(i - 1)))
-                              || typeCheckService.isBracket(String.valueOf(inputQuestion.charAt(i - 1)))){
-                        if(i == 0 && "-".equals(String.valueOf(inputQuestion.charAt(i+1)))){
-                            i++;
-                        }else {
-                            inputElement = inputElement.concat(currentChar);
-                        }
-                    }else{
-                        if(currentElementSize != 0){
-                            splitDataList.add(String.valueOf(inputElement));
-                        }
+            if (typeCheckService.isOperator(currentChar) || typeCheckService.isBracket(currentChar)) {
 
-                        splitDataList.add(currentChar);
-                        inputElement = "";
+                if ("-".equals(currentChar) && (i == 0 || typeCheckService.isOperator(inputQuestion.charAt(i - 1))
+                                                       || typeCheckService.isBracket(inputQuestion.charAt(i - 1)))) {
+                    if (i == 0 && "-".equals(String.valueOf(inputQuestion.charAt(i+1)))) {
+                        i++;
+                    } else {
+                        inputElement = inputElement.concat(currentChar);
                     }
-                }else{
-                    if(currentElementSize != 0){
-                        splitDataList.add(String.valueOf(inputElement));
+                } else {
+                    if (inputElementSize != 0) {
+                        splitDataList.add(inputElement);
+                        inputElement = "";
                     }
 
                     splitDataList.add(currentChar);
-                    inputElement = "";
                 }
-            }else if("p".equals(currentChar)){
-                if (currentElementSize != 0) {
-                    splitDataList.add(String.valueOf(inputElement));
-                    inputElement = "";
-                }
+            } else {
+                if ("p".equals(currentChar) || "e".equals(currentChar)) {
 
-                splitDataList.add(String.valueOf(Math.PI));
-                i++;
-            }else if("e".equals(currentChar)){
-                if (currentElementSize != 0) {
-                    splitDataList.add(String.valueOf(inputElement));
-                    inputElement = "";
-                }
-                splitDataList.add(String.valueOf(Math.E));
-            }else if(typeCheckService.isBracket(currentChar)){
-                if(currentElementSize != 0){
-                    splitDataList.add(String.valueOf(inputElement));
-                }
-                splitDataList.add(currentChar);
-                inputElement = "";
-            }else if(".".equals(currentChar)){
-                if(i == inputQuestion.length() -1){
-                    inputElement = inputElement.concat(currentChar);
-                    splitDataList.add(inputElement);
-                    inputElement = "";
-                }
+                    if (inputElementSize != 0) {
+                        splitDataList.add(inputElement);
+                        inputElement = "";
+                    }
 
-                inputElement = inputElement.concat(currentChar);
-            }else if(typeCheckService.isNum(currentChar)){
-                if(i == inputQuestion.length() - 1){
-                    splitDataList.add(String.valueOf(inputElement.concat(currentChar)));
-                }else{
+                    switch (currentChar){
+                        case "p" :
+                            splitDataList.add(String.valueOf(Math.PI));
+                            i++;
+                            break;
+                        case "e" :
+                            splitDataList.add(String.valueOf(Math.E));
+                            break;
+                    }
+
+                } else {
                     inputElement = inputElement.concat(currentChar);
+
+                    if (i == inputQuestion.length() - 1) {
+                        splitDataList.add(inputElement);
+                    }
                 }
-            }else{
-                return new ArrayList<>();
             }
         }
         return splitDataList;

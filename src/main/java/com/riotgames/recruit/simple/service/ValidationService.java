@@ -18,17 +18,17 @@ public class ValidationService {
         int openBracketCount = 0;
         int closeBracketCount = 0;
 
-        for(int i = 0 ; i < inputQuestion.length() ; i++){
+        for (int i = 0 ; i < inputQuestion.length() ; i++) {
             String data = String.valueOf(inputQuestion.charAt(i));
 
-            if("(".equals(data)){
+            if ("(".equals(data)) {
                 openBracketCount++;
-            }else if(")".equals(data)){
+            } else if (")".equals(data)) {
                 closeBracketCount++;
             }
         }
 
-        if(openBracketCount != closeBracketCount){
+        if (openBracketCount != closeBracketCount) {
             throw new Exception("Invalid number of brackets.");
         }
 
@@ -43,9 +43,9 @@ public class ValidationService {
                                     .replaceAll("\\^", "");
 
         // 연산자와 괄호를 모두 제거했는데 그 값이 숫자가 아닐 경우, Exception 발생
-        try{
+        try {
             Double.parseDouble(inputQuestion);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Cannot parse of the data. not Num");
         }
     }
